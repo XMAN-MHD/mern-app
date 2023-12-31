@@ -40,11 +40,20 @@ const updateTask = asyncHandler(async(req, res) => {
     }
 
     /** send a response */ 
-    res.status(200).json({ message: `Task ${req.params.id} updated.` });
+    res.status(200).json({ message: `Task ${taskId} updated.` });
 })
 
 /** delete */ 
 const deleteTask = asyncHandler(async(req, res) => {
-    res.status(200).json({ message: `Task ${req.params.id} deleted.` });
+    const taskId = req.params.id;
+
+    const deletedTask = await Task.deleteOne({ _id: taskId });
+
+    if (deletedTask.deletedCount === 0) {
+        res.status(404);
+        throw new Error(`Task with ID ${taskId} not found in the database.`);
+    }
+
+    res.status(200).json({ message: `Task ${taskId} deleted.` });
 })
 module.exports = { getTasks, setTasks, updateTask, deleteTask }
