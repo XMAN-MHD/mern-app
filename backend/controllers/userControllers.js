@@ -61,17 +61,19 @@ const loginUser = asyncHandler(async (req, res) => {
     /** verify the user's credentials */ 
     if (user && (await bcrypt.compare(password, user.password))) 
     {
-        res.json({ _id: user.id, name: user.name, email: user.email, token: generateJWTtoken(user.id) })
-
-    } else {
-    res.status(400)
-    throw new Error('Invalid user')
+        res.json({ _id: user.id, name: user.name, email: user.email, token: generateJWTtoken(user.id) });
+    } 
+    else 
+    {
+        res.status(400)
+        throw new Error('Invalid user')
     }
 });
 
 /** get user */ 
 const getCurrentUser = asyncHandler(async (req, res) => {
-    res.json({ message: 'Current user data' });
+    const { _id, name, email } = await userModel.findById(req.user.id);
+    res.status(200).json({ id: _id, name, email });
 });
 
 /** generate jwt */ 
